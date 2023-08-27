@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>表格編輯器</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 60%;
+            margin: auto;
+        }
+       h2{
+            text-align: center;
+       }
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+        }
+
+        th {
+            text-align: center;
+        }
+
+        td {
+            vertical-align: middle;
+        }
+
+        input {
+            width: 90%;
+            text-align: center; /* 调整输入框内文本的对齐方式 */
+        }
+
+        button {
+            margin: 5px;
+            padding: 5px 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .align-center {
+            text-align: center;
+        }
+
+        .align-left {
+            text-align: left;
+        }
+
+        .align-right {
+            text-align: right;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.js"></script>
+</head>
+
+<body>
+
+<h2>表格編輯器</h2>
+
+<div style="text-align: center;">
+    <button onclick="alignTable('center')">修正置中</button>
+</div>
+
+<table id="editorTable">
+    <tr>
+        <th><div class="input-container"><input type="text" /></div></th>
+    </tr>
+</table>
+
+<div style="text-align:center;">
+    <button onclick="addColumn()">增加行 +</button>
+    <button onclick="addRow()">增加列 +</button>
+    <button onclick="removeColumn()">減少行 -</button>
+    <button onclick="removeRow()">減少列 -</button>
+    <button onclick="downloadAsImage()">轉換表格為圖片並下載</button>
+</div>
+
+<script>
+    function downloadAsImage() {
+        html2canvas(document.getElementById("editorTable")).then(function(canvas) {
+            var link = document.createElement('a');
+            link.href = canvas.toDataURL();
+            link.download = 'editorTable.png';
+            link.click();
+        });
+    }
+
+    function addRow() {
+        var table = document.getElementById("editorTable");
+        var newRow = table.insertRow(-1);
+        for (let i = 0; i < table.rows[0].cells.length; i++) {
+            let newCell = newRow.insertCell(i);
+            let inputContainer = document.createElement('div');
+            inputContainer.className = 'input-container';
+            let inputElement = document.createElement('input');
+            inputElement.type = 'text';
+            inputElement.style.width = '90%';
+            inputElement.style.textAlign = 'center';
+            inputContainer.appendChild(inputElement);
+            newCell.appendChild(inputContainer);
+        }
+    }
+
+    function removeRow() {
+        var table = document.getElementById("editorTable");
+        if (table.rows.length > 1) {
+            table.deleteRow(-1);
+        }
+    }
+
+    function addColumn() {
+        var table = document.getElementById("editorTable");
+        for (let i = 0; i < table.rows.length; i++) {
+            var newCell = table.rows[i].insertCell(-1);
+            let inputContainer = document.createElement('div');
+            inputContainer.className = 'input-container';
+            let inputElement = document.createElement('input');
+            inputElement.type = 'text';
+            inputElement.style.width = '90%';
+            inputElement.style.textAlign = 'center';
+            inputContainer.appendChild(inputElement);
+            newCell.appendChild(inputContainer);
+        }
+    }
+
+    function removeColumn() {
+        var table = document.getElementById("editorTable");
+        if (table.rows[0].cells.length > 1) {
+            for (let i = 0; i < table.rows.length; i++) {
+                table.rows[i].deleteCell(-1);
+            }
+        }
+    }
+
+    function alignTable(align) {
+        var table = document.getElementById("editorTable");
+        table.className = "align-" + align;
+        var inputs = table.getElementsByTagName("input");
+        for (let i = 0; i < inputs.length; i++) {
+            inputs[i].style.textAlign = align;
+        }
+    }
+</script>
+
+</body>
+</html>
